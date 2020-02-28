@@ -21,6 +21,7 @@ import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.argument.AbstractArgumentFactory;
 import org.jdbi.v3.core.argument.Argument;
+import org.jdbi.v3.core.argument.Arguments;
 import org.jdbi.v3.core.config.ConfigRegistry;
 import org.jdbi.v3.core.rule.H2DatabaseRule;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -29,6 +30,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ArgumentsTest {
 
@@ -99,4 +102,23 @@ public class ArgumentsTest {
             .one()).isEqualTo(u.toString());
     }
     // end::uuidArgumentFactory[]
+
+    @Test
+    public void bindingNullToPrimitiveThrows() {
+        assertThat(handle.getConfig(Arguments.class).isBindingNullToPrimitivesPermitted()).isTrue();
+
+        assertThat(handle.createQuery("select :foo").bindByType("foo", null, int.class).mapTo(int.class).one())
+            .describedAs("binding a null binds the primitive's default")
+            .isZero();
+
+        handle.getConfig(Arguments.class).setBindingNullToPrimitivesPermitted(false);
+
+        assertThatThrownBy(() -> handle.createQuery("select :foo").bindByType("foo", null, int.class).mapTo(int.class).one())
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("binding null to a primitive int is forbidden by configuration, declare a boxed type instead");
+
+        assertThatCode(() -> handle.createQuery("select :foo").bindByType("foo", null, Integer.class).mapTo(Integer.class).one())
+            .describedAs("binding a null to a boxed type is fine")
+            .isNull();
+    }
 }
