@@ -70,9 +70,9 @@ public class BuiltInArgumentFactory implements ArgumentFactory.Preparable {
     @Override
     public Collection<? extends Type> prePreparedTypes() {
         return FACTORIES.stream()
-                .map(ArgumentFactory.Preparable::prePreparedTypes)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+            .map(ArgumentFactory.Preparable::prePreparedTypes)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     private static class LegacyEnumByNameArgumentFactory implements ArgumentFactory.Preparable {
