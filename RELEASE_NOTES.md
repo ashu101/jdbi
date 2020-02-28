@@ -1,3 +1,7 @@
+# 3.12.3
+  - `Arguments.bindingNullToPrimitivesPermitted` helps you catch
+  erroneous binding of `null` to a primitive type
+
 # 3.12.2
   - Bean binding: ignore getter methods with parameters
   - Immutables: find builder set method even with @ColumnName
