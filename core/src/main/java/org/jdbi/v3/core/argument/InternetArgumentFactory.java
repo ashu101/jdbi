@@ -23,9 +23,9 @@ import java.sql.Types;
 // :D
 class InternetArgumentFactory extends DelegatingArgumentFactory {
     InternetArgumentFactory() {
-        register(Inet4Address.class, Types.OTHER, (p, i, v) -> p.setString(i, v.getHostAddress()));
-        register(Inet6Address.class, Types.OTHER, (p, i, v) -> p.setString(i, v.getHostAddress()));
-        register(URL.class, Types.DATALINK, PreparedStatement::setURL);
-        register(URI.class, Types.VARCHAR, new ToStringBinder<>(PreparedStatement::setString));
+        registerPreparable(Inet4Address.class, Types.OTHER, (p, i, v) -> p.setString(i, v.getHostAddress()));
+        registerPreparable(Inet6Address.class, Types.OTHER, (p, i, v) -> p.setString(i, v.getHostAddress()));
+        registerPreparable(URL.class, Types.DATALINK, PreparedStatement::setURL);
+        registerPreparable(URI.class, Types.VARCHAR, new ToStringBinder<>(PreparedStatement::setString));
     }
 }

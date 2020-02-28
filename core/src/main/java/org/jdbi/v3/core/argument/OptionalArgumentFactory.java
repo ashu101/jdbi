@@ -28,21 +28,21 @@ import static org.jdbi.v3.core.generic.GenericTypes.getErasedType;
 
 class OptionalArgumentFactory extends DelegatingArgumentFactory {
     OptionalArgumentFactory() {
-        register(OptionalInt.class, Types.INTEGER, (p, i, v) -> {
+        registerPreparable(OptionalInt.class, Types.INTEGER, (p, i, v) -> {
             if (v.isPresent()) {
                 p.setInt(i, v.getAsInt());
             } else {
                 p.setNull(i, Types.INTEGER);
             }
         });
-        register(OptionalLong.class, Types.BIGINT, (p, i, v) -> {
+        registerPreparable(OptionalLong.class, Types.BIGINT, (p, i, v) -> {
             if (v.isPresent()) {
                 p.setLong(i, v.getAsLong());
             } else {
                 p.setNull(i, Types.BIGINT);
             }
         });
-        register(OptionalDouble.class, Types.DOUBLE, (p, i, v) -> {
+        registerPreparable(OptionalDouble.class, Types.DOUBLE, (p, i, v) -> {
             if (v.isPresent()) {
                 p.setDouble(i, v.getAsDouble());
             } else {

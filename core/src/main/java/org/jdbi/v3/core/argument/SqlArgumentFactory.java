@@ -20,7 +20,7 @@ import java.sql.Types;
 
 class SqlArgumentFactory extends DelegatingArgumentFactory {
     SqlArgumentFactory() {
-        register(Blob.class, Types.BLOB, PreparedStatement::setBlob);
-        register(Clob.class, Types.CLOB, PreparedStatement::setClob);
+        registerPreparable(Blob.class, Types.BLOB, PreparedStatement::setBlob);
+        registerPreparable(Clob.class, Types.CLOB, PreparedStatement::setClob);
     }
 }

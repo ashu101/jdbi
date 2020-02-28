@@ -20,9 +20,9 @@ import java.util.UUID;
 
 class EssentialsArgumentFactory extends DelegatingArgumentFactory {
     EssentialsArgumentFactory() {
-        register(BigDecimal.class, Types.NUMERIC, PreparedStatement::setBigDecimal);
-        register(byte[].class, Types.VARBINARY, PreparedStatement::setBytes);
-        register(String.class, Types.VARCHAR, PreparedStatement::setString);
-        register(UUID.class, Types.VARCHAR, PreparedStatement::setObject);
+        registerPreparable(BigDecimal.class, Types.NUMERIC, PreparedStatement::setBigDecimal);
+        registerPreparable(byte[].class, Types.VARBINARY, PreparedStatement::setBytes);
+        registerPreparable(String.class, Types.VARCHAR, PreparedStatement::setString);
+        registerPreparable(UUID.class, Types.VARCHAR, PreparedStatement::setObject);
     }
 }

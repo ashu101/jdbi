@@ -18,13 +18,13 @@ import java.sql.Types;
 
 class BoxedArgumentFactory extends DelegatingArgumentFactory {
     BoxedArgumentFactory() {
-        register(Boolean.class, Types.BOOLEAN, PreparedStatement::setBoolean);
-        register(Byte.class, Types.TINYINT, PreparedStatement::setByte);
-        register(Character.class, Types.CHAR, new ToStringBinder<>(PreparedStatement::setString));
-        register(Short.class, Types.SMALLINT, PreparedStatement::setShort);
-        register(Integer.class, Types.INTEGER, PreparedStatement::setInt);
-        register(Long.class, Types.INTEGER, PreparedStatement::setLong);
-        register(Float.class, Types.FLOAT, PreparedStatement::setFloat);
-        register(Double.class, Types.DOUBLE, PreparedStatement::setDouble);
+        registerPreparable(Boolean.class, Types.BOOLEAN, PreparedStatement::setBoolean);
+        registerPreparable(Byte.class, Types.TINYINT, PreparedStatement::setByte);
+        registerPreparable(Character.class, Types.CHAR, new ToStringBinder<>(PreparedStatement::setString));
+        registerPreparable(Short.class, Types.SMALLINT, PreparedStatement::setShort);
+        registerPreparable(Integer.class, Types.INTEGER, PreparedStatement::setInt);
+        registerPreparable(Long.class, Types.INTEGER, PreparedStatement::setLong);
+        registerPreparable(Float.class, Types.FLOAT, PreparedStatement::setFloat);
+        registerPreparable(Double.class, Types.DOUBLE, PreparedStatement::setDouble);
     }
 }

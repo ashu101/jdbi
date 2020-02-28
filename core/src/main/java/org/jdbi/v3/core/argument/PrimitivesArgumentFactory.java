@@ -18,13 +18,13 @@ import java.sql.Types;
 
 class PrimitivesArgumentFactory extends DelegatingArgumentFactory {
     PrimitivesArgumentFactory() {
-        register(boolean.class, Types.BOOLEAN, PreparedStatement::setBoolean);
-        register(byte.class, Types.TINYINT, PreparedStatement::setByte);
-        register(char.class, Types.CHAR, new ToStringBinder<>(PreparedStatement::setString));
-        register(short.class, Types.SMALLINT, PreparedStatement::setShort);
-        register(int.class, Types.INTEGER, PreparedStatement::setInt);
-        register(long.class, Types.INTEGER, PreparedStatement::setLong);
-        register(float.class, Types.FLOAT, PreparedStatement::setFloat);
-        register(double.class, Types.DOUBLE, PreparedStatement::setDouble);
+        registerPreparable(boolean.class, Types.BOOLEAN, PreparedStatement::setBoolean);
+        registerPreparable(byte.class, Types.TINYINT, PreparedStatement::setByte);
+        registerPreparable(char.class, Types.CHAR, new ToStringBinder<>(PreparedStatement::setString));
+        registerPreparable(short.class, Types.SMALLINT, PreparedStatement::setShort);
+        registerPreparable(int.class, Types.INTEGER, PreparedStatement::setInt);
+        registerPreparable(long.class, Types.INTEGER, PreparedStatement::setLong);
+        registerPreparable(float.class, Types.FLOAT, PreparedStatement::setFloat);
+        registerPreparable(double.class, Types.DOUBLE, PreparedStatement::setDouble);
     }
 }

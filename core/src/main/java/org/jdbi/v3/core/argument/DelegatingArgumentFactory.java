@@ -27,11 +27,11 @@ import org.jdbi.v3.core.config.ConfigRegistry;
 import static org.jdbi.v3.core.generic.GenericTypes.getErasedType;
 
 abstract class DelegatingArgumentFactory implements ArgumentFactory.Preparable {
-    private final Map<Class<?>, Function<Object, Argument>> builders = new IdentityHashMap<>();
+    private final Map<Class<?>, Function<Object, Argument>> preparableBuilders = new IdentityHashMap<>();
 
     @Override
     public Optional<Function<Object, Argument>> prepare(Type type, ConfigRegistry config) {
-        return Optional.ofNullable(builders.get(getErasedType(type)));
+        return Optional.ofNullable(preparableBuilders.get(getErasedType(type)));
     }
 
     @Override
@@ -42,16 +42,16 @@ abstract class DelegatingArgumentFactory implements ArgumentFactory.Preparable {
             expectedClass = value.getClass();
         }
 
-        return Optional.ofNullable(builders.get(expectedClass)).map(r -> r.apply(value));
+        return Optional.ofNullable(preparableBuilders.get(expectedClass)).map(r -> r.apply(value));
     }
 
     @Override
     public Collection<? extends Type> prePreparedTypes() {
-        return builders.keySet();
+        return preparableBuilders.keySet();
     }
 
     @SuppressWarnings("unchecked")
-    <T> void register(Class<T> klass, int sqlType, StatementBinder<T> binder) {
-        builders.put(klass, value -> value == null ? new NullArgument(sqlType) : new LoggableBinderArgument<>((T) value, binder));
+    <T> void registerPreparable(Class<T> klass, int sqlType, StatementBinder<T> binder) {
+        preparableBuilders.put(klass, value -> value == null ? new NullArgument(sqlType) : new LoggableBinderArgument<>((T) value, binder));
     }
 }

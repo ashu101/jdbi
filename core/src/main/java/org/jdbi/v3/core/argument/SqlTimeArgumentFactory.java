@@ -20,9 +20,9 @@ import java.sql.Types;
 
 class SqlTimeArgumentFactory extends DelegatingArgumentFactory {
     SqlTimeArgumentFactory() {
-        register(java.util.Date.class, Types.TIMESTAMP, (p, i, v) -> p.setTimestamp(i, new Timestamp(v.getTime())));
-        register(java.sql.Date.class, Types.DATE, PreparedStatement::setDate);
-        register(Time.class, Types.TIME, PreparedStatement::setTime);
-        register(Timestamp.class, Types.TIMESTAMP, PreparedStatement::setTimestamp);
+        registerPreparable(java.util.Date.class, Types.TIMESTAMP, (p, i, v) -> p.setTimestamp(i, new Timestamp(v.getTime())));
+        registerPreparable(java.sql.Date.class, Types.DATE, PreparedStatement::setDate);
+        registerPreparable(Time.class, Types.TIME, PreparedStatement::setTime);
+        registerPreparable(Timestamp.class, Types.TIMESTAMP, PreparedStatement::setTimestamp);
     }
 }
