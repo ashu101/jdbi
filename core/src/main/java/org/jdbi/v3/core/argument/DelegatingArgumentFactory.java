@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.jdbi.v3.core.argument.internal.StatementBinder;
@@ -28,6 +29,7 @@ import static org.jdbi.v3.core.generic.GenericTypes.getErasedType;
 
 abstract class DelegatingArgumentFactory implements ArgumentFactory.Preparable {
     private final Map<Class<?>, Function<Object, Argument>> preparableBuilders = new IdentityHashMap<>();
+    private final Map<Class<?>, BiFunction<Object, ConfigRegistry, Argument>> hotBuilders = new IdentityHashMap<>();
 
     @Override
     public Optional<Function<Object, Argument>> prepare(Type type, ConfigRegistry config) {
@@ -42,7 +44,11 @@ abstract class DelegatingArgumentFactory implements ArgumentFactory.Preparable {
             expectedClass = value.getClass();
         }
 
-        return Optional.ofNullable(preparableBuilders.get(expectedClass)).map(r -> r.apply(value));
+        Optional<Argument> prepared = Optional.ofNullable(preparableBuilders.get(expectedClass)).map(r -> r.apply(value));
+
+        return prepared.isPresent()
+            ? prepared
+            : Optional.ofNullable(hotBuilders.get(expectedClass)).map(r -> r.apply(value, config));
     }
 
     @Override
@@ -53,5 +59,22 @@ abstract class DelegatingArgumentFactory implements ArgumentFactory.Preparable {
     @SuppressWarnings("unchecked")
     <T> void registerPreparable(Class<T> klass, int sqlType, StatementBinder<T> binder) {
         preparableBuilders.put(klass, value -> value == null ? new NullArgument(sqlType) : new LoggableBinderArgument<>((T) value, binder));
+    }
+
+    @SuppressWarnings("unchecked")
+    <T> void registerHot(Class<T> klass, int sqlType, StatementBinder<T> binder) {
+        hotBuilders.put(klass, (value, config) -> {
+            if (value == null) {
+                if (klass.isPrimitive() && !config.get(Arguments.class).isBindingNullToPrimitivesPermitted()) {
+                    throw new IllegalArgumentException(String.format(
+                        "binding null to a primitive %s is forbidden by configuration, declare a boxed type instead", klass.getSimpleName()
+                    ));
+                }
+
+                return new NullArgument(sqlType);
+            }
+
+            return new LoggableBinderArgument<>((T) value, binder);
+        });
     }
 }
